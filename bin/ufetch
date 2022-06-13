@@ -1,0 +1,95 @@
+#!/bin/sh
+#
+# ufetch-arch - tiny system info for arch
+
+## INFO
+
+# user is already defined
+host="$(cat /etc/hostname)"
+os='Arch Linux'
+kernel="$(uname -sr)"
+uptime="$(uptime -p | sed 's/up //')"
+packages="$(pacman -Q | wc -l)"
+shell="$(basename "${SHELL}")"
+
+## UI DETECTION
+
+parse_rcs() {
+	for f in "${@}"; do
+		wm="$(tail -n 1 "${f}" 2> /dev/null | cut -d ' ' -f 2)"
+		[ -n "${wm}" ] && echo "${wm}" && return
+	done
+}
+
+rcwm="$(parse_rcs "${HOME}/.xinitrc" "${HOME}/.xsession")"
+
+ui='unknown'
+uitype='UI'
+if [ -n "${DE}" ]; then
+	ui="${DE}"
+	uitype='DE'
+elif [ -n "${WM}" ]; then
+	ui="${WM}"
+	uitype='WM'
+elif [ -n "${XDG_CURRENT_DESKTOP}" ]; then
+	ui="${XDG_CURRENT_DESKTOP}"
+	uitype='DE'
+elif [ -n "${DESKTOP_SESSION}" ]; then
+	ui="${DESKTOP_SESSION}"
+	uitype='DE'
+elif [ -n "${rcwm}" ]; then
+	ui="${rcwm}"
+	uitype='WM'
+elif [ -n "${XDG_SESSION_TYPE}" ]; then
+	ui="${XDG_SESSION_TYPE}"
+fi
+
+ui="$(basename "${ui}")"
+
+## DEFINE COLORS
+
+# probably don't change these
+if [ -x "$(command -v tput)" ]; then
+	reverse="$(tput rev)"
+	bold="$(tput bold)"
+	black="$(tput setaf 0)"
+	red="$(tput setaf 1)"
+	green="$(tput setaf 2)"
+	yellow="$(tput setaf 3)"
+	blue="$(tput setaf 4)"
+	magenta="$(tput setaf 5)"
+	cyan="$(tput setaf 6)"
+	white="$(tput setaf 7)"
+	lblack="$(tput setaf 8)"
+        lred="$(tput setaf 9)"
+        lgreen="$(tput setaf 10)"
+        lyellow="$(tput setaf 11)"
+        lblue="$(tput setaf 12)"
+        lmagenta="$(tput setaf 13)"
+        lcyan="$(tput setaf 14)"
+        lwhite="$(tput setaf 15)"
+	reset="$(tput sgr0)"
+fi
+
+# you can change these
+lc0="${reset}${bold}${cyan}"         # labels
+lc1="${reset}${bold}${blue}"
+uc="${reset}${bold}${yellow}"
+hc="${reset}${bold}${green}"
+ic="${reset}"                       # info
+c0="${reset}${cyan}"                # first color
+c1="${reset}${blue}"
+
+## OUTPUT
+
+cat <<EOF
+                 ${lc0}User:      ${uc}${USER}@${hc}${host}${reset}
+${c0}      /\\         ${lc0}OS:        ${ic}${os}${reset}
+${c0}     /  \\        ${lc0}Kernel:    ${ic}${kernel}${reset}
+${c0}    /\\   \\       ${lc0}Uptime:    ${ic}${uptime}${reset}
+${c1}   /      \\      ${lc1}Packages:  ${ic}${packages}${reset}
+${c1}  /   ,,   \\     ${lc1}Shell:     ${ic}${shell}${reset}
+${c1} /   |  |  -\\    ${lc1}${uitype}:        ${ic}${ui}${reset}
+${c1}/_-''    ''-_\\   ${lc1}Palette:   ${reset} ${reverse}${black}   ${red}   ${green}   ${yellow}   ${blue}   ${magenta}   ${cyan}   ${white}   ${reset}
+                             ${reverse}${lblack}   ${lred}   ${lgreen}   ${lyellow}   ${lblue}   ${lmagenta}   ${lcyan}   ${lwhite}   ${reset}
+EOF

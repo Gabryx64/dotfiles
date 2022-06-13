@@ -1,0 +1,3 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =1
+let g:netrw_dirhist_1='/home/gabry/sources/suckless-rices/cyan_hatsune_rice/dwm-6.2'

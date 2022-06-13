@@ -1,0 +1,22 @@
+window {
+	font-family: IPAGothic;
+	font-size: 17px;
+	background: #292b2e;
+	color: #fdf6e3;
+	border: 2px solid #5e4381;
+}
+
+#input {
+	background: #1a1a1a;
+	border: 2px solid #5e4381;
+}
+
+#entry:selected {
+	background: #a16cc7;
+	border: 2px solid #5e4381;
+}
+
+#img {
+	padding: 0 10px;
+}
+

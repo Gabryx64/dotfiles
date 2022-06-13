@@ -1,0 +1,19 @@
+{
+	"suggest.maxCompleteItemCount": 12,
+	"languageserver":
+	{
+		"ocaml-lsp":
+		{
+			"command": "opam",
+			"args": ["exec", "--", "ocamllsp"],
+			"filetypes": ["ocaml", "reason"]
+		},
+		"csharp-ls":
+		{
+			"command": "csharp-ls",
+			"filetypes": ["cs"],
+			"rootPatterns": ["*.csproj", ".vim/", ".git/", ".hg/"]
+		}
+	}
+}
+
